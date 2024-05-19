@@ -1,0 +1,5 @@
+---
+# defaults file for library_application
+backend_application_dir: /opt/backend
+frontend_application_dir: /opt/frontend
+...

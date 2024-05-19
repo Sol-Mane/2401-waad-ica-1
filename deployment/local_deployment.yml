@@ -1,0 +1,5 @@
+---
+- name: Deploy the library application locally
+  hosts: localhost
+  roles:
+    - library_application
