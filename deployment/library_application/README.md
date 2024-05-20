@@ -1,38 +1,57 @@
 Role Name
 =========
 
-A brief description of the role goes here.
+This role is used to facilitate a deployment of a 3-layer application with an
+Nginx as an SSL terminating front-end with Let'sEcnrypt as the certificate
+authority. This role also ensures automatic certificate renewal.
 
 Requirements
 ------------
 
-Any pre-requisites that may not be covered by Ansible itself or the role should be mentioned here. For instance, if the role uses the EC2 module, it may be a good idea to mention in this section that the boto package is required.
+This role requires setting up a `cerbot` account and changing the provided
+`nginx.conf` to account for the changes made.
 
 Role Variables
 --------------
 
-A description of the settable variables for this role should go here, including any variables that are in defaults/main.yml, vars/main.yml, and any variables that can/should be set via parameters to the role. Any variables that are read from other roles and/or the global scope (ie. hostvars, group vars, etc.) should be mentioned here as well.
+This role provides the following varibles in `/defaults/main.yml`:
+
+```yaml
+
+backend_application_dir: /opt/backend
+frontend_application_dir: /opt/frontend
+```
+
+The variables set the directories to which the frontend and backend portion
+respectively should be installed to.
 
 Dependencies
 ------------
 
-A list of other roles hosted on Galaxy should go here, plus any details in regards to parameters that may need to be set for other roles, or variables that are used from other roles.
+This role doesn't have any external dependencies as all the code inside realies
+on the `ansible.builtin` collection.
 
 Example Playbook
 ----------------
 
-Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
+This example playbook deploys the library\_application on a localhost the
+escalation requires root privilages and can be solved either via runtime
+parameters of `ansible-playbook` or via consistent setting in `ansible.cfg`.
 
-    - hosts: servers
-      roles:
-         - { role: username.rolename, x: 42 }
+```yaml
+---
+- name: Deploy the library application locally
+  hosts: localhost
+  roles:
+    - library_application
+```
 
 License
 -------
 
-BSD
+GPL-3.0-or-later
 
 Author Information
 ------------------
 
-An optional section for the role authors to include contact information, or a website (HTML is not allowed).
+Gabriel Michael Homa <gabriel\.homa _at sign_ htd\.cz>

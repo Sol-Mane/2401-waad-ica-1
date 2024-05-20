@@ -163,3 +163,7 @@ tags
 [._]*.un~
 
 # End of https://www.toptal.com/developers/gitignore/api/node,vim
+
+deployment/library_application/files/letsencrypt/archive
+deployment/library_application/files/letsencrypt/live
+deployment/library_application/files/letsencrypt/accounts
