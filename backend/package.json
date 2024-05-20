@@ -4,7 +4,8 @@
   "description": "WAAD ICA-1 Backend",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon ./server.js"
   },
   "author": "Gabriel Michael Homa",
   "license": "GPL-3.0",
@@ -14,5 +15,8 @@
     "express": "^4.19.2",
     "jsonwebtoken": "^9.0.2",
     "pg": "^8.11.5"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.0"
   }
 }
