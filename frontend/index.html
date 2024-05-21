@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Book Library</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div>
+      <header>
+        <button onclick="window.location.href='login.html'">Login</button>
+        <br />
+        <button onclick="window.location.href='new_book.html'">
+          Add a new book
+        </button>
+      </header>
+    </div>
+    <div x-data="fetchData()">
+      <!-- <button @click="loadData">Fetch Books</button> -->
+      <div x-show="loading">Loading...</div>
+      <div x-show="error" x-text="errorMessage" class="text-red-500"></div>
+      <div x-show="items.length === 0 && !loading" class="text-gray-500">
+        No books available
+      </div>
+      <template x-for="book in items" :key="book.isbn">
+        <div class="book-item">
+          <img
+            :src="atob(book.base64_encoded_cover)"
+            alt=""
+            class="book-cover"
+          />
+          <div class="book-details">
+            <h2 x-text="book.title"></h2>
+            <p><strong>Author:</strong> <span x-text="book.author"></span></p>
+            <p>
+              <strong>Publisher:</strong> <span x-text="book.publisher"></span>,
+              <span x-text="book.publisher_city"></span>
+            </p>
+            <p>
+              <strong>Year of Publication:</strong>
+              <span
+                x-text="new Date(book.year_of_publication).getFullYear()"
+              ></span>
+            </p>
+            <p><strong>Genre:</strong> <span x-text="book.genre"></span></p>
+            <p><strong>ISBN:</strong> <span x-text="book.isbn"></span></p>
+          </div>
+        </div>
+      </template>
+    </div>
+
+    <script
+      src="https://cdn.jsdelivr.net/npm/alpinejs@3.5.2/dist/cdn.min.js"
+      defer
+    ></script>
+    <script>
+      function fetchData() {
+        return {
+          items: [],
+          loading: false,
+          error: false,
+          errorMessage: "",
+          init() {
+            this.loadData();
+          },
+          loadData() {
+            this.loading = true;
+            this.error = false;
+            fetch("http://localhost:3000/books")
+              .then((response) => {
+                if (!response.ok)
+                  throw new Error("Network response was not ok");
+                return response.json();
+              })
+              .then((data) => {
+                this.items = data;
+                this.loading = false;
+              })
+              .catch((error) => {
+                this.error = true;
+                this.errorMessage = error.message;
+                this.loading = false;
+              });
+          },
+        };
+      }
+    </script>
+  </body>
+</html>
