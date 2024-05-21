@@ -1,7 +1,7 @@
 const db = require("./db");
 
 module.exports = async function addBook(newBook) {
-  await db.pool.query(
+  const { rows } = await db.pool.query(
     "INSERT INTO books (isbn, title, author, genre, cover_url) VALUES ($1, $2, $3, $4, $5)",
     [
       newBook.isbn,
@@ -11,4 +11,6 @@ module.exports = async function addBook(newBook) {
       newBook.cover_url,
     ]
   );
+
+  return rows;
 };

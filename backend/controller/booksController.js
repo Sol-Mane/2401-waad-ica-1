@@ -5,6 +5,7 @@ const getBooks = require("../db/getBooks");
 const deleteBook = require("../db/deleteBook");
 const addBook = require("../db/addBook");
 const updateBook = require("../db/updateBook");
+const verifyToken = require("../middleware/verifyToken");
 
 booksController.get("/", async (req, res) => {
   const books = await getBooks(req.query);
@@ -12,23 +13,33 @@ booksController.get("/", async (req, res) => {
   res.json(books);
 });
 
-// Protected routes add somekind of middleware
-booksController.post("/create_book", async (req, res) => {
+// Protected routes have the verifyToken middleware
+booksController.post("/create_book", verifyToken, async (req, res) => {
   const response = await addBook(req.body);
+
+  res.json(response);
 });
 
-booksController.put("/:isbn", async (req, res) => {
+booksController.put("/:isbn", verifyToken, async (req, res) => {
   const { isbn } = req.params;
 
   await updateBook(req.body, isbn);
 });
 
-booksController.delete("/delete_book", async (req, res) => {
-  const { isbn } = req.body;
+booksController.delete("/:isbn", verifyToken, async (req, res) => {
+  const { isbn } = req.params;
 
-  const response = await deleteBook(isbn);
+  let response;
 
-  res.json(response);
+  try {
+    response = await deleteBook(isbn);
+  } catch (e) {
+    if (e === "404") {
+      return res.status(404).json({ error: "Book not found" });
+    }
+  }
+
+  res.json();
 });
 
 module.exports = booksController;

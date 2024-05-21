@@ -25,6 +25,7 @@ module.exports = async function updateBook(updatedBook, isbn) {
     res.json({ message: "Book updated successfully" });
   } catch (err) {
     console.error(err.message);
+    throw new Error();
     res.status(500).json({ error: "Internal server error" });
   }
 };
