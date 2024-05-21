@@ -4,6 +4,7 @@ const booksController = new express.Router();
 const getBooks = require("../db/getBooks");
 const deleteBook = require("../db/deleteBook");
 const addBook = require("../db/addBook");
+const updateBook = require("../db/updateBook");
 
 booksController.get("/", async (req, res) => {
   const books = await getBooks(req.query);
@@ -16,7 +17,11 @@ booksController.post("/create_book", async (req, res) => {
   const response = await addBook(req.body);
 });
 
-booksController.patch("/update_book", async (req, res) => {});
+booksController.put("/:isbn", async (req, res) => {
+  const { isbn } = req.params;
+
+  await updateBook(req.body, isbn);
+});
 
 booksController.delete("/delete_book", async (req, res) => {
   const { isbn } = req.body;
