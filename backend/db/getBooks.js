@@ -5,7 +5,9 @@ module.exports = async function getBooks(queryString) {
 
   if (!genre && !title && !author) {
     try {
-      const { rows } = await db.pool.query("SELECT * FROM books");
+      const { rows } = await db.pool.query(
+        "SELECT books.*, genres.name as genre, authors.name as author FROM books LEFT JOIN genres ON books.genre_id = genres.id LEFT JOIN authors ON books.author_id = authors.id"
+      );
       return rows;
     } catch (err) {
       console.error(err);
@@ -15,7 +17,7 @@ module.exports = async function getBooks(queryString) {
 
   if (genre) {
     const { rows } = await db.pool.query(
-      "SELECT * FROM books LEFT JOIN genres ON books.genre_id = genres.id WHERE genre ILIKE $1",
+      "SELECT books.*, genres.name as genre, authors.name as author FROM books LEFT JOIN genres ON books.genre_id = genres.id LEFT JOIN authors ON books.author_id = authors.id WHERE genre ILIKE $1",
       [genre]
     );
     return rows;
@@ -23,7 +25,7 @@ module.exports = async function getBooks(queryString) {
 
   if (author) {
     const { rows } = await db.pool.query(
-      "SELECT * FROM books LEFT JOIN authors ON books.author_id = authors.id WHERE author ILIKE $1",
+      "SELECT books.*, genres.name as genre, authors.name as author FROM books LEFT JOIN genres ON books.genre_id = genres.id LEFT JOIN authors ON books.author_id = authors.id WHERE author ILIKE $1",
       [author]
     );
     return rows;
@@ -31,7 +33,7 @@ module.exports = async function getBooks(queryString) {
 
   if (title) {
     const { rows } = await db.pool.query(
-      "SELECT * FROM books WHERE title ILIKE $1",
+      "SELECT books.*, genres.name as genre, authors.name as author FROM books LEFT JOIN genres ON books.genre_id = genres.id LEFT JOIN authors ON books.author_id = authors.id WHERE title ILIKE $1",
       [title]
     );
     return rows;
