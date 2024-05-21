@@ -36,6 +36,9 @@
 
             <p><strong>Genre:</strong> <span x-text="book.genre"></span></p>
             <p><strong>ISBN:</strong> <span x-text="book.isbn"></span></p>
+            <button class="delete-button" @click="deleteBook(book.isbn)">
+              Delete
+            </button>
           </div>
         </div>
       </template>
@@ -72,6 +75,20 @@
                 this.error = true;
                 this.errorMessage = error.message;
                 this.loading = false;
+              });
+          },
+          deleteBook(isbn) {
+            // Send request to delete book with the provided ISBN
+            fetch(`http://localhost:3000/books/${isbn}`, {
+              method: "DELETE",
+            })
+              .then((response) => {
+                if (!response.ok) throw new Error("Failed to delete book");
+                // Remove the deleted book from the items array
+                this.items = this.items.filter((book) => book.isbn !== isbn);
+              })
+              .catch((error) => {
+                console.error("Error deleting book:", error);
               });
           },
         };
