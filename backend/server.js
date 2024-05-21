@@ -1,16 +1,20 @@
 require("dotenv").config();
 const express = require("express");
 const app = express();
-const db = require("./db");
+const db = require("./db/db");
+const booksController = require("./controller/booksController");
 
 async function startServer() {
   try {
-    // Test the database connection
+    // Start and test the database connection
     await db.pool.connect();
     console.log("Database connected successfully");
 
     // Register Middlewares
     app.use(express.json());
+
+    // Register Controllers
+    app.use("/books", booksController);
 
     // Start the Express server
     app.listen(process.env.PORT, () => {
