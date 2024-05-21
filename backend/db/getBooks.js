@@ -13,30 +13,27 @@ module.exports = async function getBooks(queryString) {
     return; // Return to exit the handler function
   }
 
-  // let query = "SELECT * FROM books WHERE 1=1";
-  // const queryParams = [];
+  if (genre) {
+    const { rows } = await db.pool.query(
+      "SELECT * FROM books LEFT JOIN genres ON books.genre_id = genres.id WHERE genre ILIKE $1",
+      [genre]
+    );
+    return rows;
+  }
 
-  // if (genre) {
-  //   queryParams.push(genre);
-  //   query += ` AND genre = $${queryParams.length}`;
-  // }
+  if (author) {
+    const { rows } = await db.pool.query(
+      "SELECT * FROM books LEFT JOIN authors ON books.author_id = authors.id WHERE author ILIKE $1",
+      [author]
+    );
+    return rows;
+  }
 
-  // if (title) {
-  //   queryParams.push(`%${title}%`);
-  //   query += ` AND title ILIKE $${queryParams.length}`;
-  // }
-
-  // if (author) {
-  //   queryParams.push(`%${author}%`);
-  //   query += ` AND author ILIKE $${queryParams.length}`;
-  // }
-
-  // try {
-  //   const { rows } = await db.pool.query(query);
-  //   console.log(rows);
-  //   return rows;
-  // } catch (err) {
-  //   console.error(err);
-  //   res.status(500).json({ error: "Internal Server Error" });
-  // }
+  if (title) {
+    const { rows } = await db.pool.query(
+      "SELECT * FROM books WHERE title ILIKE $1",
+      [title]
+    );
+    return rows;
+  }
 };
