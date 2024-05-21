@@ -17,6 +17,21 @@
       </header>
     </div>
     <div x-data="fetchData()">
+      <!-- Search form -->
+      <form @submit.prevent="searchBooks">
+        <label>
+          <input type="radio" value="author" x-model="searchCriteria" /> Author
+        </label>
+        <label>
+          <input type="radio" value="title" x-model="searchCriteria" /> Title
+        </label>
+        <label>
+          <input type="radio" value="genre" x-model="searchCriteria" /> Genre
+        </label>
+        <input type="text" x-model="searchTerm" />
+        <button type="submit">Search</button>
+      </form>
+
       <!-- <button @click="loadData">Fetch Books</button> -->
       <div x-show="loading">Loading...</div>
       <div x-show="error" x-text="errorMessage" class="text-red-500"></div>
@@ -55,6 +70,8 @@
           loading: false,
           error: false,
           errorMessage: "",
+          searchCriteria: "title", // Default search criteria
+          searchTerm: "",
           init() {
             this.loadData();
           },
@@ -89,6 +106,27 @@
               })
               .catch((error) => {
                 console.error("Error deleting book:", error);
+              });
+          },
+          searchBooks() {
+            this.loading = true;
+            this.error = false;
+            fetch(
+              `http://localhost:3000/books?${this.searchCriteria}=${this.searchTerm}`
+            )
+              .then((response) => {
+                if (!response.ok)
+                  throw new Error("Network response was not ok");
+                return response.json();
+              })
+              .then((data) => {
+                this.items = data;
+                this.loading = false;
+              })
+              .catch((error) => {
+                this.error = true;
+                this.errorMessage = error.message;
+                this.loading = false;
               });
           },
         };
