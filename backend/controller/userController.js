@@ -4,6 +4,7 @@ const express = require("express");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const findUserByUsername = require("../db/findUserByUsername");
+const addUser = require("../db/addUser");
 
 const userController = new express.Router();
 
@@ -25,6 +26,14 @@ userController.post("/login", async (req, res) => {
     { expiresIn: "24h" }
   );
   res.cookie("authorization", token, { maxAge: 900000, httpOnly: true });
+});
+
+userController.post("/register", async (req, res) => {
+  const { username, password } = req.body;
+
+  const hashed_password = await bcrypt.hash(password, 10);
+
+  await addUser(username, hashed_password);
 });
 
 module.exports = userController;
