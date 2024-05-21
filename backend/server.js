@@ -1,8 +1,11 @@
 require("dotenv").config();
 const express = require("express");
 const app = express();
+const cors = require("cors");
 const db = require("./db/db");
+const cookieParser = require("cookie-parser");
 const booksController = require("./controller/booksController");
+const userController = require("./controller/userController");
 
 async function startServer() {
   try {
@@ -11,10 +14,13 @@ async function startServer() {
     console.log("Database connected successfully");
 
     // Register Middlewares
+    app.use(cors());
+    app.use(cookieParser());
     app.use(express.json());
 
     // Register Controllers
     app.use("/books", booksController);
+    app.use("/auth", userController);
 
     // Start the Express server
     app.listen(process.env.PORT, () => {
