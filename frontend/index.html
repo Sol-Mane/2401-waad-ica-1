@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Book Library</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body class="parent">
+  
+    <button class="login-button" onclick="window.location.href='login.html'">Login</button>
+    <button class="delete-button" onclick="window.location.href='new_book.html'">
+      Add a new book
+    </button>
+    
+    <form class="search-form" @submit.prevent="searchBooks">
+      <div class="side-by-side">
+      <label for="searchCriteria" >Search Criteria:</label>
+      <select name="searchCriteria" id="searchCriteria">      
+        <option>Select an option</option>
+        <option x-model="searchCriteria" value="title">Title</option>
+        <option x-model="searchCriteria" value="author">Author</option>
+        <option x-model="searchCriteria" value="genre">Genre</option>
+      </select>
+      </div>
+      <input type="text" x-model="searchTerm" />
+      <button type="submit">Search</button>
+    </form>
+
+
+    <div x-data="fetchData()" class="books">
+
+      <!-- <button @click="loadData">Fetch Books</button> -->
+      <div x-show="loading">Loading...</div>
+      <div x-show="error" x-text="errorMessage" class="text-red-500"></div>
+      <div x-show="items.length === 0 && !loading" class="text-gray-500">
+        No books available
+      </div>
+      <template x-for="book in items" :key="book.isbn">
+        <div class="book-item">
+          <img
+            :src="atob(book.base64_encoded_cover)"
+            alt=""
+            class="book-cover"
+          />
+          <div class="book-details">
+            <h2 x-text="book.title"></h2>
+            <p><strong>Author:</strong> <span x-text="book.author"></span></p>
+
+            <p><strong>Genre:</strong> <span x-text="book.genre"></span></p>
+            <p><strong>ISBN:</strong> <span x-text="book.isbn"></span></p>
+            <button class="delete-button" @click="deleteBook(book.isbn)">
+              Delete
+            </button>
+          </div>
+        </div>
+      </template>
+    </div>
+
+    <script
+      src="https://cdn.jsdelivr.net/npm/alpinejs@3.5.2/dist/cdn.min.js"
+      defer
+    ></script>
+    <script>
+      function fetchData() {
+        return {
+          items: [],
+          loading: false,
+          error: false,
+          errorMessage: "",
+          searchCriteria: "title", // Default search criteria
+          searchTerm: "",
+          init() {
+            this.loadData();
+          },
+          loadData() {
+            this.loading = true;
+            this.error = false;
+            fetch("http://localhost:3000/books")
+              .then((response) => {
+                if (!response.ok)
+                  throw new Error("Network response was not ok");
+                return response.json();
+              })
+              .then((data) => {
+                this.items = data;
+                this.loading = false;
+              })
+              .catch((error) => {
+                this.error = true;
+                this.errorMessage = error.message;
+                this.loading = false;
+              });
+          },
+          deleteBook(isbn) {
+            // Send request to delete book with the provided ISBN
+            fetch(`http://localhost:3000/books/${isbn}`, {
+              method: "DELETE",
+            })
+              .then((response) => {
+                if (!response.ok) throw new Error("Failed to delete book");
+                // Remove the deleted book from the items array
+                this.items = this.items.filter((book) => book.isbn !== isbn);
+              })
+              .catch((error) => {
+                console.error("Error deleting book:", error);
+              });
+          },
+          searchBooks() {
+            this.loading = true;
+            this.error = false;
+            fetch(
+              `http://localhost:3000/books?${this.searchCriteria}=${this.searchTerm}`
+            )
+              .then((response) => {
+                if (!response.ok)
+                  throw new Error("Network response was not ok");
+                return response.json();
+              })
+              .then((data) => {
+                this.items = data;
+                this.loading = false;
+              })
+              .catch((error) => {
+                this.error = true;
+                this.errorMessage = error.message;
+                this.loading = false;
+              });
+          },
+        };
+      }
+    </script>
+  </body>
+</html>

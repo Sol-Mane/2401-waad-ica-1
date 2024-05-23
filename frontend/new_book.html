@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Add New Book</title>
+    <script
+      src="https://cdn.jsdelivr.net/npm/alpinejs@3.7.2/dist/alpine.min.js"
+      defer
+    ></script>
+  </head>
+  <body>
+    <div x-data="{ formData: { title: '', author: '', genre: '', isbn: '' } }">
+      <form @submit.prevent="submitForm(formData)">
+        <div>
+          <label for="title">Title:</label>
+          <input type="text" id="title" x-model="formData.title" required />
+        </div>
+        <div>
+          <label for="author">Author:</label>
+          <input type="text" id="author" x-model="formData.author" required />
+        </div>
+        <div>
+          <label for="genre">Genre:</label>
+          <input type="text" id="genre" x-model="formData.genre" required />
+        </div>
+        <div>
+          <label for="isbn">ISBN:</label>
+          <input type="text" id="isbn" x-model="formData.isbn" required />
+        </div>
+        <button type="submit">Submit</button>
+      </form>
+    </div>
+
+    <script>
+      function submitForm(formData) {
+        fetch("http://localhost:3000/books/new_book", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(formData),
+        })
+          .then((response) => {
+            if (!response.ok) {
+              throw new Error("Network response was not ok");
+            }
+            return response.json();
+          })
+          .then((data) => {
+            console.log("Success:", data);
+          })
+          .catch((error) => {
+            console.error("Error:", error);
+          });
+      }
+
+      Alpine.data = () => ({
+        submitForm,
+      });
+    </script>
+
+    <style></style>
+  </body>
+</html>

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login Page</title>
+    <script
+      src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"
+      defer
+    ></script>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div x-data="loginForm()" class="login-container">
+      <form @submit.prevent="submitForm">
+        <div>
+          <label for="username">Username:</label>
+          <input type="text" id="username" x-model="username" required />
+        </div>
+        <div>
+          <label for="password">Password:</label>
+          <input type="password" id="password" x-model="password" required />
+        </div>
+        <button type="submit">Login</button>
+      </form>
+    </div>
+
+    <script>
+      function loginForm() {
+        return {
+          username: "",
+          password: "",
+          async submitForm() {
+            try {
+              let response = await fetch("http://localhost:3000/auth/login", {
+                credentials: "include",
+                mode: "no-cors",
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                  username: this.username,
+                  password: this.password,
+                }),
+              });
+
+              if (!response.ok) {
+                throw new Error("Network response was not ok");
+              }
+
+              let data = await response.json();
+              console.log(data);
+              // Handle success (e.g., redirect to another page, show success message)
+            } catch (error) {
+              console.error(
+                "There was a problem with the fetch operation:",
+                error
+              );
+              // Handle error (e.g., show error message)
+            }
+          },
+        };
+      }
+    </script>
+  </body>
+</html>

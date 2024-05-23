@@ -2,36 +2,36 @@
 
 This section outlines the databases used by the project.
 
-## Book Database
+## Book Table
+
 The following attributes create a book record in the project:
 
-* varchar(128) -> Title
-* varchar(128) -> Author
-* varchar(128) -> Publisher
-* varchar(128) -> Publisher's City
-* int          -> Year of publication
-* varchar(22)  -> International Standard Book Number (ISBN)
-* varchar[n]   -> Base64 Encoded Cover
+- varchar(22) Primary Key -> International Standard Book Number (ISBN)
+- varchar(128) -> Title
+- varchar(128) -> Author
+- varchar[n] -> Cover URL
+- varchar(32) -> Genre
 
-## User Database
+## User Table
+
 The following attributes create a user record in the project:
 
-* varchar(32) -> Username
-* varchar[n]  -> Encrypted Password Hash
+- varchar(32) -> Username
+- varchar[n] -> Encrypted Password Hash
 
 # REST API Endpoint Design
 
 The following endpoints are exposed by the back-end:
 
-* /books -> gets all the books stored in the database
-* /login -> Allows a user to authenticate and receive a JWT in return
-* /change_password -> Allows an authenticated user to change his password
-* /create_book -> Allows an authenticated user to add a book to the database
-* /update_book -> Allows an authenticated user to change a book in the database
-* /delete_book -> Allows an authenticated user to delete a book
-
+- /books -> gets all the books stored in the database
+- /login -> Allows a user to authenticate and receive a JWT in return
+- /change_password -> Allows an authenticated user to change his password
+- /create_book -> Allows an authenticated user to add a book to the database
+- /update_book -> Allows an authenticated user to change a book in the database
+- /delete_book -> Allows an authenticated user to delete a book
 
 # Project Milestones And Timelines
+
 The following weeks are relative to the start of thr work on the ICA.
 
 1. Finalized application design, database design draft (Week 1)

@@ -167,3 +167,4 @@ tags
 deployment/library_application/files/letsencrypt/archive
 deployment/library_application/files/letsencrypt/live
 deployment/library_application/files/letsencrypt/accounts
+.vscode
