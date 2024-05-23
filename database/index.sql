@@ -2,12 +2,12 @@
 CREATE TABLE authors ( 
   id SERIAL PRIMARY KEY,
   name VARCHAR(128)
-)
+);
 
 CREATE TABLE genres (
   id SERIAL PRIMARY KEY,
   name VARCHAR(32)
-)
+);
 
 CREATE TABLE users (
     id SERIAL PRIMARY KEY,
@@ -24,8 +24,6 @@ CREATE TABLE books (
     FOREIGN KEY (author_id) REFERENCES authors(id),
     FOREIGN KEY (genre_id) REFERENCES genres(id)
 );
-
-
 
 -- Authors
 INSERT INTO authors (name) VALUES 
