@@ -5,3 +5,5 @@
 port=${1:-3000}
 echo "PORT=\"${port}\"" > .env
 ( /usr/bin/openssl rand -base64 128 | tr -d '\n=' && echo  )| sed -e 's:^:SECRET=":' -e 's:$:":' >> .env
+echo '# postgres://user:password@host:port/db' >> .env
+echo 'PG_CONNECTION_STRING=\'\'' >> .env
