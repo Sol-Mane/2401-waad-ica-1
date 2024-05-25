@@ -134,6 +134,9 @@
             // Send request to delete book with the provided ISBN
             fetch(`http://localhost:3000/books/${isbn}`, {
               method: "DELETE",
+              headers: {
+                Authorization: localStorage.getItem("JWToken"),
+              },
             })
               .then((response) => {
                 if (!response.ok) throw new Error("Failed to delete book");

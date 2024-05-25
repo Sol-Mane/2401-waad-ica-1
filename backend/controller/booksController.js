@@ -14,7 +14,7 @@ booksController.get("/", async (req, res) => {
 });
 
 // Protected routes have the verifyToken middleware
-booksController.post("/create_book", verifyToken, async (req, res) => {
+booksController.post("/new_book", verifyToken, async (req, res) => {
   const response = await addBook(req.body);
 
   res.json(response);

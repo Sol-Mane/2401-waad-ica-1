@@ -4,10 +4,6 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Add New Book</title>
-    <script
-      src="https://cdn.jsdelivr.net/npm/alpinejs@3.7.2/dist/alpine.min.js"
-      defer
-    ></script>
   </head>
   <body>
     <div x-data="{ formData: { title: '', author: '', genre: '', isbn: '' } }">
@@ -31,6 +27,10 @@
         <button type="submit">Submit</button>
       </form>
     </div>
+    <script
+      src="https://cdn.jsdelivr.net/npm/alpinejs@3.5.2/dist/cdn.min.js"
+      defer
+    ></script>
 
     <script>
       function submitForm(formData) {
@@ -38,6 +38,7 @@
           method: "POST",
           headers: {
             "Content-Type": "application/json",
+            Authorization: localStorage.getItem("JWToken"),
           },
           body: JSON.stringify(formData),
         })
@@ -49,6 +50,7 @@
           })
           .then((data) => {
             console.log("Success:", data);
+            window.location.href = "index.html";
           })
           .catch((error) => {
             console.error("Error:", error);
