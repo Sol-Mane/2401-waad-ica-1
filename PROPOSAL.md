@@ -9,7 +9,6 @@ The following attributes create a book record in the project:
 - varchar(22) Primary Key -> International Standard Book Number (ISBN)
 - varchar(128) -> Title
 - varchar(128) -> Author
-- varchar[n] -> Cover URL
 - varchar(32) -> Genre
 
 ## User Table
