@@ -7,15 +7,8 @@ module.exports = async function updateBook(updatedBook, isbn) {
          SET title = $1,
              author = $2,
              genre = $3,
-             cover_url = $4
-         WHERE isbn = $5`,
-      [
-        updatedBook.title,
-        updatedBook.author,
-        updatedBook.genre,
-        updatedBook.cover_url,
-        isbn,
-      ]
+         WHERE isbn = $4`,
+      [updatedBook.title, updatedBook.author, updatedBook.genre, isbn]
     );
 
     if (result.rowCount === 0) {
