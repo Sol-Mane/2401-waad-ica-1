@@ -55,11 +55,6 @@
       </div>
       <template x-for="book in items" :key="book.isbn">
         <div class="book-item">
-          <img
-            :src="atob(book.base64_encoded_cover)"
-            alt=""
-            class="book-cover"
-          />
           <div class="book-details">
             <h2 x-text="book.title"></h2>
             <p><strong>Author:</strong> <span x-text="book.author"></span></p>
