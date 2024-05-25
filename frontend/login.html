@@ -32,13 +32,9 @@
           password: "",
           async submitForm() {
             try {
-              localStorage.setItem("isLoggedIn", "true");
-
-              window.location.href = "index.html";
-
               let response = await fetch("http://localhost:3000/auth/login", {
+                mode: "cors",
                 credentials: "include",
-                mode: "no-cors",
                 method: "POST",
                 headers: {
                   "Content-Type": "application/json",
@@ -53,11 +49,14 @@
                 throw new Error("Network response was not ok");
               }
 
-              let data = await response.json();
+              if (response.ok) {
+                let data = await response.json();
 
-              // localStorage.setItem("isLoggedIn", "true");
+                localStorage.setItem("isLoggedIn", "true");
+                localStorage.setItem("JWToken", data);
 
-              // Handle success (e.g., redirect to another page, show success message)
+                window.location.href = "index.html";
+              }
             } catch (error) {
               console.error(
                 "There was a problem with the fetch operation:",
