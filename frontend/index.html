@@ -96,6 +96,7 @@
 
       function logOut() {
         localStorage.removeItem("isLoggedIn");
+        localStorage.removeItem("JWToken");
         Alpine.store("isLoggedIn", false);
       }
 
