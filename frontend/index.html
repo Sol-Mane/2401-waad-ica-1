@@ -47,38 +47,36 @@
     </form>
 
     <div x-data="fetchData()" class="books">
-      <!-- <button @click="loadData">Fetch Books</button> -->
       <div x-show="loading">Loading...</div>
       <div x-show="error" x-text="errorMessage" class="text-red-500"></div>
       <div x-show="items.length === 0 && !loading" class="text-gray-500">
         No books available
       </div>
-      <template x-for="book in items" :key="book.isbn">
+      <template x-for="(book, index) in items" :key="book.isbn">
         <div class="book-item">
-          <div class="book-details">
+          <div class="book-details" x-show="!book.editMode">
             <h2 x-text="book.title"></h2>
             <p><strong>Author:</strong> <span x-text="book.author"></span></p>
-
             <p><strong>Genre:</strong> <span x-text="book.genre"></span></p>
             <p><strong>ISBN:</strong> <span x-text="book.isbn"></span></p>
-            <div>
-              <button
-                x-data
-                x-show="$store.isLoggedIn"
-                class="login-button"
-                @click="deleteBook(book.isbn)"
-              >
-                Edit
+            <div x-show="$store.isLoggedIn">
+              <button class="edit-button" @click="editBook(index)">Edit</button>
+              <button class="delete-button" @click="deleteBook(book.isbn)">
+                Delete
               </button>
             </div>
-            <button
-              x-data
-              x-show="$store.isLoggedIn"
-              class="delete-button"
-              @click="deleteBook(book.isbn)"
-            >
-              Delete
-            </button>
+          </div>
+          <div class="book-edit" x-show="book.editMode">
+            <input type="text" x-model="book.title" placeholder="Title" />
+            <input type="text" x-model="book.author" placeholder="Author" />
+            <input type="text" x-model="book.genre" placeholder="Genre" />
+            <input type="text" x-model="book.isbn" placeholder="ISBN" />
+            <div>
+              <button class="save-button" @click="saveBook(index)">Save</button>
+              <button class="cancel-button" @click="cancelEdit(index)">
+                Cancel
+              </button>
+            </div>
           </div>
         </div>
       </template>
@@ -167,6 +165,31 @@
                 this.errorMessage = error.message;
                 this.loading = false;
               });
+          },
+          async editBook(index) {
+            this.items[index].editMode = true;
+          },
+          async cancelEdit(index) {
+            this.items[index].editMode = false;
+          },
+          async saveBook(index) {
+            const book = this.items[index];
+            try {
+              await fetch(`http://localhost:3000/books/${book.isbn}`, {
+                method: "PUT",
+                headers: {
+                  "Content-Type": "application/json",
+                  Authorization: localStorage.getItem("JWToken"),
+                },
+                body: JSON.stringify(book),
+              });
+
+              this.items[index].editMode = false;
+              // Optionally, you can fetch updated book data here
+            } catch (error) {
+              console.error("Error saving book:", error);
+              // Handle error
+            }
           },
         };
       }

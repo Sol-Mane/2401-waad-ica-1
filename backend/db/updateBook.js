@@ -1,24 +1,25 @@
 const db = require("./db");
 
 module.exports = async function updateBook(updatedBook, isbn) {
+  console.log("hello world");
+
+  console.log(updatedBook, isbn);
+
   try {
     const result = await db.pool.query(
       `UPDATE books
-         SET title = $1,
-             author = $2,
-             genre = $3,
-         WHERE isbn = $4`,
-      [updatedBook.title, updatedBook.author, updatedBook.genre, isbn]
+         SET title = $1
+         WHERE isbn = $2 RETURNING *`,
+      [updatedBook.title, isbn]
     );
 
     if (result.rowCount === 0) {
-      return res.status(404).json({ error: "Book not found" });
+      throw new Error("Empty");
     }
 
-    res.json({ message: "Book updated successfully" });
+    return result;
   } catch (err) {
-    console.error(err.message);
-    throw new Error();
-    res.status(500).json({ error: "Internal server error" });
+    console.error(err);
+    throw new Error(err);
   }
 };
