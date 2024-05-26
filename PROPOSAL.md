@@ -2,32 +2,44 @@
 
 This section outlines the databases used by the project.
 
-## Book Table
+## Books Table
 
 The following attributes create a book record in the project:
 
-- varchar(22) Primary Key -> International Standard Book Number (ISBN)
-- varchar(128) -> Title
-- varchar(128) -> Author
-- varchar(32) -> Genre
+- varchar(22) Primary Key -> isbn
+- varchar(128) -> title
+- int -> author_id
+- int -> genre_id
 
-## User Table
+## Genres Table
+
+- serial Primary Key -> id
+- varchar(128) -> name
+
+## Authors Table
+
+- serial Primary Key -> id
+- varchar(128) -> name
+
+## Users Table
 
 The following attributes create a user record in the project:
 
-- varchar(32) -> Username
-- varchar[n] -> Encrypted Password Hash
+- serial Primary Key -> id
+- varchar(32) -> username
+- varchar[n] -> hashed_password
+
+## Genre Table
 
 # REST API Endpoint Design
 
 The following endpoints are exposed by the back-end:
 
-- /books -> gets all the books stored in the database
-- /login -> Allows a user to authenticate and receive a JWT in return
-- /change_password -> Allows an authenticated user to change his password
-- /create_book -> Allows an authenticated user to add a book to the database
-- /update_book -> Allows an authenticated user to change a book in the database
-- /delete_book -> Allows an authenticated user to delete a book
+- GET /books -> gets all the books stored in the database
+- POST /login -> Allows a user to authenticate and receive a JWT in return
+- POST /books/new_book -> Allows an authenticated user to add a book to the database
+- PUT /books/:isbn -> Allows an authenticated user to change a book in the database
+- DELETE /books/:isbn -> Allows an authenticated user to delete a book
 
 # Project Milestones And Timelines
 
