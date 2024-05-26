@@ -1,5 +1,25 @@
 ---
 # defaults file for library_application
-backend_application_dir: /opt/backend
-frontend_application_dir: /opt/frontend
+# <app_defaults>
+application_user: root
+deployment_dir: /opt
+backend_application_dir: /opt/backend/
+frontend_application_dir: /opt/frontend/
+# </app_defaults>
+# <deployment_switches>
+deploy_backend: True
+deploy_frontend: True
+deploy_database: True
+deploy_certbot: True
+deploy_nginx: True
+# </deployment_switches>
+# <backend>
+backend_src_directory: backend
+# </backend>
+# <frontend>
+frontend_src_directory: frontend
+# </frontend>
+# <database>
+database_src_directory: database
+# </database>
 ...

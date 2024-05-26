@@ -1,10 +1,6 @@
 const db = require("./db");
 
 module.exports = async function updateBook(updatedBook, isbn) {
-  console.log("hello world");
-
-  console.log(updatedBook, isbn);
-
   try {
     const result = await db.pool.query(
       `UPDATE books

@@ -1,0 +1,35 @@
+---
+#- name: Populate the application directory
+#  ansible.posix.synchronize:
+#    src: {{ deployment_dir }}/deployment/backend
+#    dest: {{ backend_application_dir }}
+
+# In order to not introduce a dependency in the posix collection, `cp` is used to workaround ansible's `copy` module nesting
+
+- name: Install the backend application
+  ansible.builtin.shell:
+    cmd: "cp -r {{ deployment_dir}}/deployment/backend {{ backend_application_dir }}"
+    creates: "{{ backend_application_dir }}"
+
+- name: Install Node Version Manager (NVM)
+  become_user: "{{ application_user }}"
+  ansible.builtin.shell:
+    cmd: 'curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash'
+    executable: /bin/bash
+    creates: /root/.nvm
+
+- name: Install Node 20
+  become_user: "{{ application_user }}"
+  ansible.builtin.shell:
+    cmd: 'source ~{{ application_user }}/.bashrc && nvm install 20.13.1'
+    executable: /bin/bash
+    creates: /root/.nvm/versions/node/v20.13.1/bin/npm
+
+- name: Install application dependencies
+  become_user: "{{ application_user }}"
+  ansible.builtin.shell:
+    cmd: 'source ~{{ application_user }}/.bashrc && npm install'
+    chdir: "{{ backend_application_dir }}"
+    executable: /bin/bash
+    creates: "{{ backend_application_dir }}/node_modules"
+...

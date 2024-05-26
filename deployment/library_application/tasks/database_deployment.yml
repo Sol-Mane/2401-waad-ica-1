@@ -1,0 +1,18 @@
+---
+- name: Configure Postgres's Host Based Authentication
+  ansible.builtin.template:
+    src: pg_hba.conf.j2
+    dest: /etc/postgresql/15/main/pg_hba.conf
+  register: postgresql_hba_output
+
+- name: Restart PostgreSQL
+  ansible.builtin.systemd:
+    service: postgresql
+    state: restarted
+    enabled: True
+  when: postgresql_hba_output.changed
+
+- name: Inform user
+  debug:
+    msg: "Initial schema is available under {{ deployment_dir }}/database/index.sql alongside a handler script"
+...

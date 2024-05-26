@@ -1,0 +1,12 @@
+[Unit]
+Description=Library Application
+
+[Service]
+Type=simple
+Restart=always
+User=root
+WorkingDirectory=/opt/backend/
+ExecStart=/bin/bash -i -c "npm --prefix /opt/backend start"
+
+[Install]
+WantedBy=multi-user.target
