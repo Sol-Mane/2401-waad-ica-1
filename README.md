@@ -1,3 +1,8 @@
+# Login Credentials
+
+As per the ICA specification the login credentials are preset to:
+`admin`, `secret`.
+
 # Architecture
 
 This project servers as a demonstration of a standard three layer architecture;
@@ -104,9 +109,3 @@ deployment of such application with Ansible.
 The application provides a simplified book repository. An unauthorized user
 (Reader) is able to browse through the repository. An authorized user
 (Librarian) can create, update, delete books.
-
-# Deploying This Application
-
-```yaml
-ansible-playbook local_deployment.yml
-```
