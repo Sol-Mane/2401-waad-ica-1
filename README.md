@@ -1,7 +1,7 @@
-# Login Credentials
+# App Availability
 
-As per the ICA specification the login credentials are preset to:
-`admin`, `secret`.
+The application is available on `https://waad.durendal.xyz.`.As per the ICA
+specification the login credentials are preset to: `admin`, `secret`.
 
 # Architecture
 
