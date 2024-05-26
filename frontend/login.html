@@ -10,7 +10,10 @@
     ></script>
     <link rel="stylesheet" href="styles.css" />
   </head>
-  <body>
+  <body class="login">
+    <div class="back-button">
+      <button onclick="window.location.href='index.html'">Go back</button>
+    </div>
     <div x-data="loginForm()" class="login-container">
       <form @submit.prevent="submitForm">
         <div>

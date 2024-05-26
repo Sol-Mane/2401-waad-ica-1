@@ -7,79 +7,100 @@
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body class="parent">
-    <div x-data="login">
-      <button
-        class="login-button"
-        x-show="!($store.isLoggedIn)"
-        @click="window.location.href='login.html'"
-      >
-        Login
-      </button>
-      <button
-        class="login-button"
-        x-show="$store.isLoggedIn"
-        onclick="window.location.href='new_book.html'"
-      >
-        Add a new book
-      </button>
+    <header>
+      <div x-data="login">
+        <button
+          class="login-button"
+          x-show="!($store.isLoggedIn)"
+          @click="window.location.href='login.html'"
+        >
+          Login
+        </button>
+        <button
+          class="login-button"
+          x-show="$store.isLoggedIn"
+          onclick="window.location.href='new_book.html'"
+        >
+          Add a new book
+        </button>
 
-      <button
-        class="delete-button"
-        x-show="$store.isLoggedIn"
-        @click="logOut()"
-      >
-        Logout
-      </button>
-    </div>
-
-    <form class="search-form" @submit.prevent="searchBooks">
-      <div class="side-by-side">
-        <label for="searchCriteria">Search Criteria:</label>
-        <select name="searchCriteria" id="searchCriteria">
-          <option>Select an option</option>
-          <option x-model="searchCriteria" value="title">Title</option>
-          <option x-model="searchCriteria" value="author">Author</option>
-          <option x-model="searchCriteria" value="genre">Genre</option>
-        </select>
+        <button
+          class="delete-button"
+          x-show="$store.isLoggedIn"
+          @click="logOut()"
+        >
+          Logout
+        </button>
       </div>
-      <input type="text" x-model="searchTerm" />
-      <button type="submit">Search</button>
-    </form>
+    </header>
 
-    <div x-data="fetchData()" class="books">
-      <div x-show="loading">Loading...</div>
-      <div x-show="error" x-text="errorMessage" class="text-red-500"></div>
-      <div x-show="items.length === 0 && !loading" class="text-gray-500">
-        No books available
-      </div>
-      <template x-for="(book, index) in items" :key="book.isbn">
-        <div class="book-item">
-          <div class="book-details" x-show="!book.editMode">
-            <h2 x-text="book.title"></h2>
-            <p><strong>Author:</strong> <span x-text="book.author"></span></p>
-            <p><strong>Genre:</strong> <span x-text="book.genre"></span></p>
-            <p><strong>ISBN:</strong> <span x-text="book.isbn"></span></p>
-            <div x-show="$store.isLoggedIn">
-              <button class="edit-button" @click="editBook(index)">Edit</button>
-              <button class="delete-button" @click="deleteBook(book.isbn)">
-                Delete
-              </button>
-            </div>
-          </div>
-          <div class="book-edit" x-show="book.editMode">
-            <input type="text" x-model="book.title" placeholder="Title" />
-            <input type="text" x-model="book.author" placeholder="Author" />
-            <input type="text" x-model="book.genre" placeholder="Genre" />
-            <input type="text" x-model="book.isbn" placeholder="ISBN" />
-            <div>
-              <button class="save-button" @click="saveBook(index)">Save</button>
-              <button class="cancel-button" @click="cancelEdit(index)">
-                Cancel
-              </button>
-            </div>
-          </div>
+    <div x-data="fetchData()">
+      <div>
+        <div>
+          <label for="searchCriteria">Select Criteria</label>
+          <select
+            id="searchCriteria"
+            x-model="searchCriteria"
+            class="block w-full mt-1"
+          >
+            <option value="genre">Genre</option>
+            <option value="author">Author</option>
+            <option value="title">Title</option>
+          </select>
         </div>
-      </template>
+
+        <div>
+          <label for="searchTerm">Search Term</label>
+          <input
+            type="text"
+            id="searchTerm"
+            x-model="searchTerm"
+            placeholder="Enter search term"
+          />
+        </div>
+
+        <button @click="performSearch">Search</button>
+      </div>
+
+      <div class="books">
+        <div x-show="loading">Loading...</div>
+        <div x-show="error" x-text="errorMessage" class="text-red-500"></div>
+        <div x-show="items.length === 0 && !loading" class="text-gray-500">
+          No books available
+        </div>
+        <template x-for="(book, index) in items" :key="book.isbn">
+          <div class="book-item">
+            <div class="book-details" x-show="!book.editMode">
+              <h2 x-text="book.title"></h2>
+              <p><strong>Author:</strong> <span x-text="book.author"></span></p>
+              <p><strong>Genre:</strong> <span x-text="book.genre"></span></p>
+              <p><strong>ISBN:</strong> <span x-text="book.isbn"></span></p>
+              <div x-show="$store.isLoggedIn">
+                <button class="edit-button" @click="editBook(index)">
+                  Edit
+                </button>
+                <button class="delete-button" @click="deleteBook(book.isbn)">
+                  Delete
+                </button>
+              </div>
+            </div>
+            <div class="book-edit" x-show="book.editMode">
+              <input type="text" x-model="book.title" placeholder="Title" />
+              <input type="text" x-model="book.author" placeholder="Author" />
+              <input type="text" x-model="book.genre" placeholder="Genre" />
+              <input type="text" x-model="book.isbn" placeholder="ISBN" />
+              <div>
+                <button class="save-button" @click="saveBook(index)">
+                  Save
+                </button>
+                <button class="cancel-button" @click="cancelEdit(index)">
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        </template>
+      </div>
     </div>
 
     <script
@@ -104,7 +125,7 @@
           loading: false,
           error: false,
           errorMessage: "",
-          searchCriteria: "title", // Default search criteria
+          searchCriteria: "genre",
           searchTerm: "",
           init() {
             this.loadData();
@@ -128,6 +149,13 @@
                 this.loading = false;
               });
           },
+          async performSearch() {
+            const response = await fetch(
+              `http://localhost:3000/books?${this.searchCriteria}=${this.searchTerm}`
+            );
+            this.items = await response.json();
+          },
+
           deleteBook(isbn) {
             // Send request to delete book with the provided ISBN
             fetch(`http://localhost:3000/books/${isbn}`, {
@@ -185,7 +213,6 @@
               });
 
               this.items[index].editMode = false;
-              // Optionally, you can fetch updated book data here
             } catch (error) {
               console.error("Error saving book:", error);
               // Handle error

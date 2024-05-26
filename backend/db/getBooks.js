@@ -12,21 +12,21 @@ module.exports = async function getBooks(queryString) {
     } catch (err) {
       console.error(err);
     }
-    return; // Return to exit the handler function
   }
 
   if (genre) {
     const { rows } = await db.pool.query(
-      "SELECT books.*, genres.name as genre, authors.name as author FROM books LEFT JOIN genres ON books.genre_id = genres.id LEFT JOIN authors ON books.author_id = authors.id WHERE genres.name ILIKE $1",
-      [genre]
+      "SELECT books.*, genres.name as genre, authors.name as author FROM genres LEFT JOIN books ON books.genre_id = genres.id LEFT JOIN authors ON books.author_id = authors.id WHERE genres.name ILIKE $1",
+      [`%${genre}%`]
     );
+
     return rows;
   }
 
   if (author) {
     const { rows } = await db.pool.query(
-      "SELECT books.*, genres.name as genre, authors.name as author FROM books LEFT JOIN genres ON books.genre_id = genres.id LEFT JOIN authors ON books.author_id = authors.id WHERE authors.name ILIKE $1",
-      [author]
+      "SELECT books.*, genres.name as genre, authors.name as author FROM authors LEFT JOIN books ON books.author_id = authors.id LEFT JOIN genres ON books.genre_id = genres.id WHERE authors.name ILIKE $1",
+      [`%${author}%`]
     );
     return rows;
   }
@@ -34,7 +34,7 @@ module.exports = async function getBooks(queryString) {
   if (title) {
     const { rows } = await db.pool.query(
       "SELECT books.*, genres.name as genre, authors.name as author FROM books LEFT JOIN genres ON books.genre_id = genres.id LEFT JOIN authors ON books.author_id = authors.id WHERE title ILIKE $1",
-      [title]
+      [`%${title}%`]
     );
     return rows;
   }
