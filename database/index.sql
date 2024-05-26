@@ -52,5 +52,5 @@ INSERT INTO books (isbn, title, author_id, genre_id) VALUES
 INSERT INTO users (username, hashed_password) VALUES
   ('user1', '$2b$10$85JK9Sc81UnPPLa3RC7HD.rl/bEYUvaDcD13JCOekEUDYDjvQGtvS'), -- 123
   ('user2', '$2b$10$85JK9Sc81UnPPLa3RC7HD.rl/bEYUvaDcD13JCOekEUDYDjvQGtvS'), -- 123
-  ('user3', '$2b$10$85JK9Sc81UnPPLa3RC7HD.rl/bEYUvaDcD13JCOekEUDYDjvQGtvS'); -- 123
+  ('user3', '$2b$10$85JK9Sc81UnPPLa3RC7HD.rl/bEYUvaDcD13JCOekEUDYDjvQGtvS'), -- 123
   ('admin', '$2b$10$O5hbWrX3euR1A0pZ7jLgouB0w8oQLCK0fhzF49ZI932GcvdN3xoyK'); -- secret
