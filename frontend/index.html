@@ -143,7 +143,7 @@
           loadData() {
             this.loading = true;
             this.error = false;
-            fetch("http://localhost:3000/books")
+            fetch("https://waad.durendal.xyz:3000/books")
               .then((response) => {
                 if (!response.ok)
                   throw new Error("Network response was not ok");
@@ -161,14 +161,14 @@
           },
           async performSearch() {
             const response = await fetch(
-              `http://localhost:3000/books?${this.searchCriteria}=${this.searchTerm}`
+              `https://waad.durendal.xyz:3000/books?${this.searchCriteria}=${this.searchTerm}`
             );
             this.items = await response.json();
           },
 
           deleteBook(isbn) {
             // Send request to delete book with the provided ISBN
-            fetch(`http://localhost:3000/books/${isbn}`, {
+            fetch(`https://waad.durendal.xyz:3000/books/${isbn}`, {
               method: "DELETE",
               headers: {
                 Authorization: localStorage.getItem("JWToken"),
@@ -187,7 +187,7 @@
             this.loading = true;
             this.error = false;
             fetch(
-              `http://localhost:3000/books?${this.searchCriteria}=${this.searchTerm}`
+              `https://waad.durendal.xyz:3000/books?${this.searchCriteria}=${this.searchTerm}`
             )
               .then((response) => {
                 if (!response.ok)
@@ -213,7 +213,7 @@
           async saveBook(index) {
             const book = this.items[index];
             try {
-              await fetch(`http://localhost:3000/books/${book.isbn}`, {
+              await fetch(`https://waad.durendal.xyz:3000/books/${book.isbn}`, {
                 method: "PUT",
                 headers: {
                   "Content-Type": "application/json",

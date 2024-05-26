@@ -1,0 +1,29 @@
+---
+# As with backend/ the nesting has to be worked-around using the shell module
+- name: Populate frontend
+  shell:
+    cmd: "cp -r {{ deployment_dir }}/deployment/frontend {{ frontend_application_dir }}"
+    creates: "{{ frontend_application_dir }}"
+
+- name: Configure Nginx
+  ansible.builtin.template:
+    src: nginx.conf
+    dest: /etc/nginx/nginx.conf
+    owner: root
+    group: root
+    mode: '0644'
+  register: nginx_configuration_output
+
+- name: Validate Nginx's configuration
+  ansible.builtin.shell:
+    cmd: nginx -t
+  changed_when: False
+
+- name: "{{ nginx_templated_name }}"
+  ansible.builtin.systemd:
+    name: nginx
+    state: "{% if nginx_configuration_output.changed %}restarted{% else %}started{% endif %}"
+    enabled: True
+  vars:
+    nginx_templated_name: "Ensure that Nginx is enabled and {% if nginx_configuration_output.changed %}re-started as its configuration has changed{% else %}started{% endif %}."
+...

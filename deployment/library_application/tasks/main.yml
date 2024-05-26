@@ -1,73 +1,68 @@
 ---
 # tasks file for library_application
-
 - name: Ensure that the required applications are installed
   ansible.builtin.apt:
     pkg:
     - postgresql-all
     - nginx
+    - python3
+    - python3-venv
+    - libaugeas0
 
-- name: Configure PostgreSQL
-  ansible.builtin.debug:
-    msg: To be Implemented
+- name: Clone the repository into the deployment directory
+  ansible.builtin.git:
+    repo: https://github.com/Sol-Mane/2401-waad-ica-1.git
+    dest: "{{ deployment_dir }}/deployment"
+    single_branch: yes
+    version: master
 
-- name: Install npm
-  ansible.builtin.debug:
-    msg: To be Implemented
+- name: Include PostgreSQl related tasks
+  ansible.builtin.include_tasks:
+    file: "{% if deploy_database %}database_deployment{% else %}empty{% endif %}.yml"
 
-- name: Install the backend application
-  ansible.builtin.debug:
-    msg: "To be Implemented in {{ backend_application_dir }}"
-
-- name: Install the frontend application
-  ansible.builtin.debug:
-    msg: "To be Implemented in {{ frontend_application_dir }}"
-
-- name: Install certbot
-  ansible.builtin.debug:
-    msg: To be Implemented
-
-- name: Configure certbot
-  ansible.builtin.debug:
-    msg: To be implemented
-
-- name: "Start and enable certbot's timer and service"
-  ansible.builtin.debug:
-    msg: To be Implemented
-
-- name: Configure Nginx
-  ansible.builtin.debug:
-    msg: To be Implemented
-  register: nginx_configuration_output
-
-- name: "{{ nginx_templated_name }}"
-  ansible.builtin.debug:
-    msg: To be implemented
+- name: "{{ backend_deployment_templated_name }}"
+  ansible.builtin.include_tasks:
+    file: "{% if deploy_backend %}backend_deployment{% else %}empty{% endif %}.yml"
   vars:
-    nginx_templated_name:  "Ensure that Nginx is enabled and {% if nginx_configuration_output.changed %}re-started as its configuration has changed{% else %}started{% endif %}."
+    backend_deployment_templated_name: "{% if deploy_backend %}Deploying backend{% else %}Skipping backend deployment{% endif %}"
+
+- name: Include Certbot's deployment tasks
+  ansible.builtin.include_tasks:
+    file: "{% if deploy_certbot %}certbot_deployment{% else %}empty{% endif %}.yml"
+
+- name: Include frontend deployment tasks
+  ansible.builtin.include_tasks:
+    file: "{% if deploy_frontend %}frontend_deployment{% else %}empty{% endif %}.yml"
 
 - name: Ensure that the unit files for the application exist
-  ansible.builtin.debug:
-    msg: "{{ unit_file }}"
+  ansible.builtin.template:
+    src: "{{ unit_file }}"
+    dest: /etc/systemd/system/
+    owner: root
+    group: root
+    mode: '0644'
   register: unit_files_output
   loop_control:
     loop_var: unit_file
   loop:
     - backend.service
-    - frontend.service
-    - library.service
     - certbot-renewal.service
     - certbot-renewal.timer
 
+- name: Reload systemd's daemons
+  systemd:
+    daemon_reload: True
+
 - name: "{{ service_state_templated_name }}"
-  ansible.builtin.debug:
-    msg: "{{ unit_file }}"
+  ansible.builtin.systemd:
+    name: service
+    enabled: True
+    state: "{% if unit_files_output.changed %}restarted{% else %}started{% endif %}"
   loop_control:
-    loop_var: unit_file
+    loop_var: service
   loop:
     - backend.service
-    - frontend.service
-    - library.service
+    - certbot-renewal.timer
   vars:
     service_state_templated_name: "Ensure that the unit files are enabled and {% if unit_files_output.changed %}re-started as they were changed{% else %}started{% endif %}"
 ...
