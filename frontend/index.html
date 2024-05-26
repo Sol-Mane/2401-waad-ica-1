@@ -86,8 +86,18 @@
             </div>
             <div class="book-edit" x-show="book.editMode">
               <input type="text" x-model="book.title" placeholder="Title" />
-              <input type="text" x-model="book.author" placeholder="Author" />
-              <input type="text" x-model="book.genre" placeholder="Genre" />
+              <input
+                type="text"
+                x-model="book.author"
+                placeholder="Author"
+                disabled
+              />
+              <input
+                type="text"
+                x-model="book.genre"
+                placeholder="Genre"
+                disabled
+              />
               <input type="text" x-model="book.isbn" placeholder="ISBN" />
               <div>
                 <button class="save-button" @click="saveBook(index)">
