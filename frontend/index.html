@@ -7,51 +7,76 @@
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body class="parent">
-  
-    <button class="login-button" onclick="window.location.href='login.html'">Login</button>
-    <button class="delete-button" onclick="window.location.href='new_book.html'">
-      Add a new book
-    </button>
-    
+    <div x-data="login">
+      <button
+        class="login-button"
+        x-show="!($store.isLoggedIn)"
+        @click="window.location.href='login.html'"
+      >
+        Login
+      </button>
+      <button
+        class="login-button"
+        x-show="$store.isLoggedIn"
+        onclick="window.location.href='new_book.html'"
+      >
+        Add a new book
+      </button>
+
+      <button
+        class="delete-button"
+        x-show="$store.isLoggedIn"
+        @click="logOut()"
+      >
+        Logout
+      </button>
+    </div>
+
     <form class="search-form" @submit.prevent="searchBooks">
       <div class="side-by-side">
-      <label for="searchCriteria" >Search Criteria:</label>
-      <select name="searchCriteria" id="searchCriteria">      
-        <option>Select an option</option>
-        <option x-model="searchCriteria" value="title">Title</option>
-        <option x-model="searchCriteria" value="author">Author</option>
-        <option x-model="searchCriteria" value="genre">Genre</option>
-      </select>
+        <label for="searchCriteria">Search Criteria:</label>
+        <select name="searchCriteria" id="searchCriteria">
+          <option>Select an option</option>
+          <option x-model="searchCriteria" value="title">Title</option>
+          <option x-model="searchCriteria" value="author">Author</option>
+          <option x-model="searchCriteria" value="genre">Genre</option>
+        </select>
       </div>
       <input type="text" x-model="searchTerm" />
       <button type="submit">Search</button>
     </form>
 
-
     <div x-data="fetchData()" class="books">
-
-      <!-- <button @click="loadData">Fetch Books</button> -->
       <div x-show="loading">Loading...</div>
       <div x-show="error" x-text="errorMessage" class="text-red-500"></div>
       <div x-show="items.length === 0 && !loading" class="text-gray-500">
         No books available
       </div>
-      <template x-for="book in items" :key="book.isbn">
+      <template x-for="(book, index) in items" :key="book.isbn">
         <div class="book-item">
-          <img
-            :src="atob(book.base64_encoded_cover)"
-            alt=""
-            class="book-cover"
-          />
-          <div class="book-details">
+          <div class="book-details" x-show="!book.editMode">
             <h2 x-text="book.title"></h2>
             <p><strong>Author:</strong> <span x-text="book.author"></span></p>
-
             <p><strong>Genre:</strong> <span x-text="book.genre"></span></p>
             <p><strong>ISBN:</strong> <span x-text="book.isbn"></span></p>
-            <button class="delete-button" @click="deleteBook(book.isbn)">
-              Delete
-            </button>
+            <div x-show="$store.isLoggedIn">
+              <button class="edit-button" @click="editBook(index)">Edit</button>
+              <button class="delete-button" @click="deleteBook(book.isbn)">
+                Delete
+              </button>
+            </div>
+          </div>
+          <div class="book-edit" x-show="book.editMode">
+            <input type="text" x-model="book.title" placeholder="Title" />
+            <input type="text" x-model="book.author" placeholder="Author" />
+            <input type="text" x-model="book.genre" placeholder="Genre" />
+            <input type="text" x-model="book.isbn" placeholder="ISBN" />
+            <div>
+              <button class="save-button" @click="saveBook(index)">Save</button>
+              <button class="cancel-button" @click="cancelEdit(index)">
+                Cancel
+              </button>
+            </div>
           </div>
         </div>
       </template>
@@ -62,6 +87,17 @@
       defer
     ></script>
     <script>
+      document.addEventListener("alpine:init", () => {
+        const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+        Alpine.store("isLoggedIn", isLoggedIn);
+      });
+
+      function logOut() {
+        localStorage.removeItem("isLoggedIn");
+        localStorage.removeItem("JWToken");
+        Alpine.store("isLoggedIn", false);
+      }
+
       function fetchData() {
         return {
           items: [],
@@ -96,6 +132,9 @@
             // Send request to delete book with the provided ISBN
             fetch(`http://localhost:3000/books/${isbn}`, {
               method: "DELETE",
+              headers: {
+                Authorization: localStorage.getItem("JWToken"),
+              },
             })
               .then((response) => {
                 if (!response.ok) throw new Error("Failed to delete book");
@@ -126,6 +165,31 @@
                 this.errorMessage = error.message;
                 this.loading = false;
               });
+          },
+          async editBook(index) {
+            this.items[index].editMode = true;
+          },
+          async cancelEdit(index) {
+            this.items[index].editMode = false;
+          },
+          async saveBook(index) {
+            const book = this.items[index];
+            try {
+              await fetch(`http://localhost:3000/books/${book.isbn}`, {
+                method: "PUT",
+                headers: {
+                  "Content-Type": "application/json",
+                  Authorization: localStorage.getItem("JWToken"),
+                },
+                body: JSON.stringify(book),
+              });
+
+              this.items[index].editMode = false;
+              // Optionally, you can fetch updated book data here
+            } catch (error) {
+              console.error("Error saving book:", error);
+              // Handle error
+            }
           },
         };
       }

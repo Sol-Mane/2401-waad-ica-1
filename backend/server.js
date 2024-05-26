@@ -7,6 +7,11 @@ const cookieParser = require("cookie-parser");
 const booksController = require("./controller/booksController");
 const userController = require("./controller/userController");
 
+const corsOptions = {
+  origin: "http://127.0.0.1:5500",
+  credentials: true,
+};
+
 async function startServer() {
   try {
     // Start and test the database connection
@@ -14,8 +19,8 @@ async function startServer() {
     console.log("Database connected successfully");
 
     // Register Middlewares
-    app.use(cors());
-    app.use(cookieParser());
+    app.use(cors(corsOptions));
+    // app.use(cookieParser());
     app.use(express.json());
 
     // Register Controllers
