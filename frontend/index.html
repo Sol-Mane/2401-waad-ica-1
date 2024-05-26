@@ -8,7 +8,7 @@
   </head>
   <body class="parent">
     <header>
-      <div x-data="login">
+      <div class="simple-flex" x-data="login">
         <button
           class="login-button"
           x-show="!($store.isLoggedIn)"
@@ -35,9 +35,9 @@
     </header>
 
     <div x-data="fetchData()">
-      <div>
-        <div>
-          <label for="searchCriteria">Select Criteria</label>
+      <div class="search-container">
+        <div class="search-row-1" >
+          <label for="searchCriteria">Select Criteria: </label>
           <select
             id="searchCriteria"
             x-model="searchCriteria"
@@ -49,8 +49,8 @@
           </select>
         </div>
 
-        <div>
-          <label for="searchTerm">Search Term</label>
+        <div class="search-row-2">
+          <label for="searchTerm">Search Term: </label>
           <input
             type="text"
             id="searchTerm"
@@ -59,7 +59,7 @@
           />
         </div>
 
-        <button @click="performSearch">Search</button>
+        <button class="search-row-3" @click="performSearch">Search</button>
       </div>
 
       <div class="books">
@@ -75,7 +75,7 @@
               <p><strong>Author:</strong> <span x-text="book.author"></span></p>
               <p><strong>Genre:</strong> <span x-text="book.genre"></span></p>
               <p><strong>ISBN:</strong> <span x-text="book.isbn"></span></p>
-              <div x-show="$store.isLoggedIn">
+              <div class="side-by-side" x-show="$store.isLoggedIn">
                 <button class="edit-button" @click="editBook(index)">
                   Edit
                 </button>
@@ -99,7 +99,7 @@
                 disabled
               />
               <input type="text" x-model="book.isbn" placeholder="ISBN" />
-              <div>
+              <div class="book-edit-buttons">
                 <button class="save-button" @click="saveBook(index)">
                   Save
                 </button>
